@@ -1,7 +1,10 @@
 import os
 import ntpath
-import re
+import operator
 
+
+MININDEX = 0
+MAXINDEX = 10000
 
 def path_leaf(path):
     head, tail = ntpath.split(path)
@@ -17,7 +20,12 @@ def get_file_name(path):
                         d[word] = d[word] + 1
                     else:
                         d[word] =  1
-
+    sorted_d = sorted(d.items(), key=operator.itemgetter(1), reverse = True)
+    list_d = []
+    for i in range (MININDEX, MAXINDEX):
+        list_d.append(sorted_d[i][0])
+    print list_d
+    return list_d
 
 def main():
     txt_path = "/tmp2/weitang114/Holmes_Training_Data/training_removed.txt"
