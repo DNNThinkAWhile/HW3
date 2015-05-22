@@ -1,3 +1,5 @@
+import gensim
+import pickle
 #import sys
 #if (len(sys.argv)!=2):
 #    print 'word2vec <threshold>'
@@ -10,7 +12,7 @@ with open('pure_test.txt', 'r') as f:
 
 # --------------1toN MAP------------------------
 # get frequent words
-#threshold = sys.argv[1]
+#threshold = int(sys.argv[1])
 threshold = 10
 train_word = {}
 test_word = {}
@@ -35,18 +37,39 @@ for w in train:
     else:
         train_word[w] += 1
 print 'raw training word:', len(train_word)
-
-train_word_star = []
+word2N = {} # word2N['cow'] = 23
+N2word = {} # N2word[23] = 'cow'
+idx = 0
 # add word from testing data
 for w in test_word:
-    train_word_star.append(w)
+    word2N[w] = idx
+    N2word[idx] = w
+    ++ idx
     
 # filter by freq > threshold
 duplicate = 0
+pick = []
 for w, v in train_word.iteritems():
     if v > threshold and w not in test_word:
-        train_word_star.append(w)
+        pick.append(w)
+        word2N[w] = idx
+        N2word[idx] = w
+        ++ idx
     elif v > threshold:
         duplicate += 1
-print 'training word:', len(train_word_star)
 print 'duplicate word:', duplicate
+pickle.dump( word2N, open( "word2N.p", "wb" ) )
+pickle.dump( N2word, open( "N2word.p", "wb" ) )
+sentences = []
+for w in train:
+    w = w.strip('\n')
+    if w not in pick:
+        sentences.append('dummmmmy')
+    else:
+        sentences.append(w)
+print 'start training model'
+model = gensim.models.Word2Vec([sentences], size=100, window=5, min_count=1)
+#model.save('th_%d.model' % (threshold))
+#model.train(sentences)
+#model = gensim.models.Word2Vec.load('th_10.model')
+print model['you']
