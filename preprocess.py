@@ -34,7 +34,8 @@ for line in raw:
         fout.write(line)
 
 fout.flush()
-cmd = "cat %s | sed -e 's/ /\\'$'\\n/g' | sed '/^ *$/d' > %s " % ('tmp2.txt', o_filename)
+#cmd = "cat %s | sed -e 's/ /\\'$'\\n/g' | sed '/^ *$/d' > %s " % ('tmp2.txt', o_filename)
+cmd = "cat %s | sed '/^ *$/d' > %s " % ('tmp2.txt', o_filename)
 os.system(cmd)
 
 with open('tmp.txt', 'r') as f:

@@ -1,9 +1,7 @@
 #!/bin/bash -e
-n="
-"
 cat training/*.TXT \
-    | LC_ALL=C sed '1d' \
     | LC_ALL=C sed 's/_/ /g' \
+    | LC_ALL=C sed 's/\./\'$'\n/g' \
     | LC_ALL=C sed "s/[^a-zA-Z0-9]/ /g" \
     | LC_ALL=C sed "s/^ll//g" \
     | LC_ALL=C sed "s/^[ \t]*//g" \
