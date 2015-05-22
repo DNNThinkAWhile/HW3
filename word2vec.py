@@ -6,6 +6,8 @@ import pickle
 
 o_filename = 'training_data.txt'
 with open(o_filename, 'r') as f:
+    sentences = f.readlines()
+with open('pure_train.txt', 'r') as f:
     train = f.readlines()
 with open('pure_test.txt', 'r') as f:
     test = f.readlines()
@@ -47,8 +49,6 @@ for w in test_word:
     ++ idx
     
 # filter by freq > threshold
-duplicate = 0
-pick = []
 for w, v in train_word.iteritems():
     if v > threshold and w not in test_word:
         pick.append(w)
@@ -60,15 +60,15 @@ for w, v in train_word.iteritems():
 print 'duplicate word:', duplicate
 pickle.dump( word2N, open( "word2N.p", "wb" ) )
 pickle.dump( N2word, open( "N2word.p", "wb" ) )
-sentences = []
-for w in train:
-    w = w.strip('\n')
-    if w not in pick:
-        sentences.append('dummmmmy')
-    else:
-        sentences.append(w)
+
+for i in range(len(sentences)):
+    sentences[i] = sentences[i].strip('\n')
+    token = sentences[i].split(' ')
+    for t in token:
+        if t not in pick:
+            t = 'dummmmmy'
 print 'start training model'
-model = gensim.models.Word2Vec([sentences], size=100, window=5, min_count=1)
+model = gensim.models.Word2Vec( s.split(' ') for s in sentences, size=100, window=5, min_count=1)
 #model.save('th_%d.model' % (threshold))
 #model.train(sentences)
 #model = gensim.models.Word2Vec.load('th_10.model')
