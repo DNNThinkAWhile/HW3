@@ -13,63 +13,54 @@ with open('pure_test.txt', 'r') as f:
 # --------------1toN MAP------------------------
 # get frequent words
 #threshold = int(sys.argv[1])
-threshold = 10
+idx = 0
+duplicate = 0
 train_word = {}
-test_word = {}
+word2N = {} # word2N['cow'] = 23
+N2word = {} # N2word[23] = 'cow'
 for i in range(len(test)):
     q = 0
     if i % 5 == 0:
         q = 1
-    token = test[i].split(' ')
+    token = test[i].strip('\n').split(' ')
     for t in token:
         if t == '':
             continue
-        if not t in test_word:
-            test_word[t] = 1
+        if not t in train_word:
+            train_word[t] = 1
+            word2N[t] = idx
+            N2word[idx] = t
+            ++ idx
         else:
             if q == 1:
-                test_word[t] += 1
-print 'testing word:', len(test_word)
+                train_word[t] += 1
 for w in train:
     w = w.strip('\n')
     if w not in train_word:
         train_word[w] = 1
-    else:
-        train_word[w] += 1
-print 'raw training word:', len(train_word)
-word2N = {} # word2N['cow'] = 23
-N2word = {} # N2word[23] = 'cow'
-idx = 0
-# add word from testing data
-for w in test_word:
-    word2N[w] = idx
-    N2word[idx] = w
-    ++ idx
-    
-# filter by freq > threshold
-duplicate = 0
-pick = []
-for w, v in train_word.iteritems():
-    if v > threshold and w not in test_word:
-        pick.append(w)
         word2N[w] = idx
         N2word[idx] = w
         ++ idx
-    elif v > threshold:
-        duplicate += 1
-print 'duplicate word:', duplicate
+    else:
+        train_word[w] += 1
+#        duplicate += 1
+print 'training word:', len(train_word)
+#print 'duplicate word:', duplicate
 pickle.dump( word2N, open( "word2N.p", "wb" ) )
 pickle.dump( N2word, open( "N2word.p", "wb" ) )
+    
+# filter by freq > threshold
+threshold = 10
 sentences = []
 for w in train:
     w = w.strip('\n')
-    if w not in pick:
-        sentences.append('dummmmmy')
-    else:
+    if train_word[w] > threshold:
         sentences.append(w)
+    else:
+        sentences.append('dummmmy')
+#sentences = gensim.models.doc2vec.LabeledLineSentence('training_removed.txt')
 print 'start training model'
-model = gensim.models.Word2Vec([sentences], size=100, window=5, min_count=1)
-#model.save('th_%d.model' % (threshold))
-#model.train(sentences)
+model = gensim.models.word2vec.Word2Vec(sentences, size=100, window=5, min_count=1)
+model.save('th_%d.model' % (threshold))
 #model = gensim.models.Word2Vec.load('th_10.model')
 print model['you']
