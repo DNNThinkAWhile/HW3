@@ -40,12 +40,19 @@ class TestData:
 
 	def __getitem__(self, key):
 		return self.probs[key]
+	def __len__(self):
+		return len(self.probs)
 
 def test(argv):
+	if (len(argv) < 2):
+		print 'loadtest.py testing_data.txt'
+		return
+
 	fname = argv[1]
 	tt = TestData(fname)
 	print tt[0]
 	print tt[1].get_q_withans(0)
+	print 'problem count:', len(tt)
 
 if __name__ == '__main__':
 	import sys
