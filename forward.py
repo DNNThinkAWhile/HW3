@@ -5,9 +5,9 @@ from theano import function
 from theano import shared
 import random
 
-x_size = 5
-y_size = 15
-mem_vec_size =10 
+x_size = 100
+y_size = 53608 
+mem_vec_size = 10 
 GRAM_COUNT = 4
 BATCH_SIZE = 128
 
@@ -47,15 +47,15 @@ y =  1/(T.exp((-1)*zy)+1)
 grad = ans_y - y
 
 forward = function ( [input_x, ans_y], \
-                     [theano.Out(y,borrow = True), theano.Out(a,borrow = True), theano.Out(z,borrow = True), theano.Out()], \
+                     [theano.Out(y,borrow = True), theano.Out(a,borrow = True), theano.Out(z,borrow = True)], \
                      updates = [(error_grad, grad)])                                
-
+'''
 def init(x_size, mem_vec_size, y_size):        
     w_i = np.random.uniform(-1/np.sqrt(x_size)*3, 1/np.sqrt(x_size)*3, (x_size, mem_vec_size))
     w_h = np.random.uniform(-1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3, (mem_vec_size, mem_vec_size))
     w_o = np.random.uniform(-1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3, (mem_vec_size, y_size))
     return w_i, w_h, w_o
-
+'''
 def main():
     x = np.random.uniform(-1,1,(GRAM_COUNT, BATCH_SIZE, x_size))
     ans_y = np.zeros((GRAM_COUNT, BATCH_SIZE, x_size))    
