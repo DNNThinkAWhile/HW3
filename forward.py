@@ -12,6 +12,8 @@ GRAM_COUNT = 4
 BATCH_SIZE = 128
 
 real_mem_vector = shared( np.random.uniform( -1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3,(1, mem_vec_size)) )
+error_grad = shared( np.zeros((GRAM_COUNT, BATCH_SIZE, x_size)))
+
 
 #forward_mem_vector = shared(real_mem_vector.get_value())
                                                 
@@ -20,7 +22,7 @@ w_h = shared( np.random.uniform(-1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_si
 w_o = shared( np.random.uniform(-1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3, (mem_vec_size, y_size)) )                               
 
 input_x = T.dtensor3('input_x')
-#ans_y = T.dtensor3('ans_y')
+ans_y = T.dtensor3('ans_y')
 
 z_x = T.tensordot(input_x, w_i,1)
 
@@ -42,8 +44,11 @@ z = T.concatenate([z1, z2, z3, z4], axis = 0)
 zy = T.tensordot(a,w_o,1)
 y =  1/(T.exp((-1)*zy)+1)
 
+grad = ans_y - y
 
-forward = function ( [input_x], [theano.Out(y,borrow = True), theano.Out(a,borrow = True), theano.Out(z,borrow = True)])                                
+forward = function ( [input_x, ans_y], \
+                     [theano.Out(y,borrow = True), theano.Out(a,borrow = True), theano.Out(z,borrow = True), theano.Out()], \
+                     updates = [(error_grad, grad)])                                
 
 def init(x_size, mem_vec_size, y_size):        
     w_i = np.random.uniform(-1/np.sqrt(x_size)*3, 1/np.sqrt(x_size)*3, (x_size, mem_vec_size))
@@ -61,7 +66,7 @@ def main():
             ans_y[i][j][k] = 1
            
     print w_i.get_value()
-    y,a,z = forward(x)
+    y,a,z = forward(x, ans_y)
     print 'success!!!!!!!!!!!!!!!!!!!'
     
 
