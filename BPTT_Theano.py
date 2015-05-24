@@ -28,6 +28,9 @@ def VecToMatrixAndDot (vec1, vec2):
 def SigZWPhi (z, w, phi):
     return MatrixVecDot((VecMatMulti(SigmoidGrad(z),w.T)).T,phi)
 
+def CheckExploid (w_delta, w_th, w_pre):
+    return (w_delta, np.absolute(w_delta).sum()) if np.absolute(w_delta).sum() < 100 * w_th else (-1 *w_pre, np.absolute(w_pre).sum())
+
 def BPTT_Theano(W, C, Z, A):
     # De-tuple
     Wo = W[0]
@@ -43,26 +46,33 @@ def BPTT_Theano(W, C, Z, A):
     Wo_fix = []
     Wi_fix = []
     Wh_fix = []
+    Wfixtmp = 99999
+    Wpre = 0
     for l in range(len(C) - 1, -1, -1):
         phi = 0
         for i in range(l - 1, -1, -1):
             if i == l - 1:
                 # Wo part
                 phi = EleWiseVV(SigmoidGrad(Zo[i]), C[l])
-                Wo_fix.append(VecToMatrixAndDot(Ao[i], phi))
+                Wpre, Wfixtmp = CheckExploid(VecToMatrixAndDot(Ao[i], phi), Wfixtmp, Wpre)
+                Wo_fix.append(Wpre)
                 # Wi part
                 phi_i = SigZWPhi(Zi[i], Wo, phi)
-                Wi_fix.append(VecToMatrixAndDot(Ai[i], phi_i))
+                Wpre, Wfixtmp = CheckExploid(VecToMatrixAndDot(Ai[i], phi_i), Wfixtmp, Wpre)
+                Wi_fix.append(Wpre)
                 # Wh part
                 phi = SigZWPhi(Zh[i], Wo, phi)
-                Wh_fix.append(VecToMatrixAndDot(Ah[i], phi))
+                Wpre, Wfixtmp = CheckExploid(VecToMatrixAndDot(Ah[i], phi), Wfixtmp, Wpre)
+                Wh_fix.append(Wpre)
             else:
                 # Wi part
                 phi_i = SigZWPhi(Zi[i], Wh, phi)
-                Wi_fix.append(VecToMatrixAndDot(Ai[i], phi_i))
+                Wpre, Wfixtmp = CheckExploid(VecToMatrixAndDot(Ai[i], phi_i), Wfixtmp, Wpre)
+                Wi_fix.append(Wpre)
                 # Wh part
                 phi = SigZWPhi(Zh[i], Wh, phi)
-                Wh_fix.append(VecToMatrixAndDot(Ah[i], phi))
+                Wpre, Wfixtmp = CheckExploid(VecToMatrixAndDot(Ah[i], phi), Wfixtmp, Wpre)
+                Wh_fix.append(Wpre)
     # Fix all Ws
     for fix in Wo_fix:
         Wo = Wo - fix
