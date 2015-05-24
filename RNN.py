@@ -38,9 +38,11 @@ for i in range(len(train)):
         instance_y[j][n] = 1
     x.append(instance_x)
     ans_y.append(instance_y)
-    if i % batch == 0 and i != 0:
+    if (i+1) % batch == 0:
         x = np.array(x)
         ans_y = np.array(ans_y)
+        x = np.swapaxes(x,0,1)
+        ans_y = np.swapaxes(ans_y,0,1)
         y,a,z = forward.forward(x, ans_y)
         x = []
         ans_y = []
