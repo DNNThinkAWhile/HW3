@@ -26,7 +26,7 @@ def VecToMatrixAndDot (vec1, vec2):
     return MatrixDot(np.matrix(vec1).T, np.matrix(vec2))
 
 def SigZWPhi (z, w, phi):
-    return MatrixVecDot((VecMatMulti(SigmoidGrad(z),w.T)),phi)
+    return MatrixVecDot((VecMatMulti(SigmoidGrad(z),w.T)).T,phi)
 
 def BPTT_Theano(W, C, Z, A):
     # De-tuple
@@ -51,10 +51,6 @@ def BPTT_Theano(W, C, Z, A):
                 phi = EleWiseVV(SigmoidGrad(Zo[i]), C[l])
                 Wo_fix.append(VecToMatrixAndDot(Ao[i], phi))
                 # Wi part
-                print 'z = ',Zi[i][0]
-                print 'Z2 = ',Zi[i][1]
-                print 'Wo = ', Wo.shape()
-                print 'phi = ',phi.shape()
                 phi_i = SigZWPhi(Zi[i], Wo, phi)
                 Wi_fix.append(VecToMatrixAndDot(Ai[i], phi_i))
                 # Wh part
@@ -78,7 +74,7 @@ def BPTT_Theano(W, C, Z, A):
 	
 def main():
     Wi = np.ones((3,2)) * 0.5
-    Wh = np.ones((4,2)) * 0.3
+    Wh = np.ones((2,2)) * 0.3
     Wo = np.ones((2,5)) * 0.7
     W = (Wo, Wi, Wh)
     C = [None] * 3
@@ -94,9 +90,9 @@ def main():
     Ao[1] = np.array([0.5,0.2])
     Ao[2] = np.array([0.5,0.2])
     Ah = [None] * 3
-    Ah[0] = np.array([0.3,0.6,0.23,0.856])
-    Ah[1] = np.array([0.3,0.6,0.23,0.856])
-    Ah[2] = np.array([0.3,0.6,0.23,0.856])
+    Ah[0] = np.array([0.3,0.6])
+    Ah[1] = np.array([0.3,0.6])
+    Ah[2] = np.array([0.3,0.6])
     A = (Ao, Ai, Ah)
     Zi = [None] * 3
     Zi[0] = np.array([0.34,0.76])
@@ -111,7 +107,9 @@ def main():
     Zh[1] = np.array([0.23,0.43])
     Zh[2] = np.array([0.23,0.43])
     Z = (Zo, Zi, Zh)
-    print BPTT_Theano(W, C, Z, A)
+    print 'Wo = ',BPTT_Theano(W, C, Z, A)[0]
+    print 'Wi = ',BPTT_Theano(W,C,Z,A)[1]
+    print 'Wh = ',BPTT_Theano(W,C,Z,A)[2]
 
 if __name__ == "__main__":
     main()
