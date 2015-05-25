@@ -28,21 +28,17 @@ class TestData:
 				l = l[l.find(')') + 2:].rstrip()
 				si = l.find('[')
 				ei = l.find(']')
+				ans = l[si + 1: ei]
+				ans5.append(ans)
 
 				# start of a problem
 				if i % 5 == 0:
 					q = l[:si] + '_' + l[ei + 1:]
 					q = q.replace(',', '').replace('.', '')
 
-				if i % 5 == 0 and i != 0:
+				if i % 5 == 4:
 					self.probs.append(Problem(q, ans5))
 					ans5 = []
-
-				ans = l[si + 1: ei]
-				ans5.append(ans)
-
-			self.probs.append(Problem(q, ans5))
-			ans5 = []
 
 	def __getitem__(self, key):
 		return self.probs[key]
@@ -59,6 +55,8 @@ def test(argv):
 	print tt[0]
 	print tt[1].get_q_withans(0)
 	print 'problem count:', len(tt)
+
+	print tt[1039]
 
 if __name__ == '__main__':
 	import sys
