@@ -2,6 +2,7 @@ class Problem:
 	def __init__(self, q='How _ you', a=['are', 'am', 'is']):
 		self.q = q
 		self.a = a
+		self._ans_index = q.split().index('_')
 
 	def get_q_ori(self):
 		return self.q
@@ -11,6 +12,10 @@ class Problem:
 
 	def __str__(self):
 		return 'q: ' + self.q + '\na: ' + str(self.a)
+
+	def ans_pos_in_sentence(self):
+		return self._ans_index
+
 
 class TestData:
 	def __init__(self, testfile):
@@ -27,6 +32,7 @@ class TestData:
 				# start of a problem
 				if i % 5 == 0:
 					q = l[:si] + '_' + l[ei + 1:]
+					q = q.replace(',', '').replace('.', '')
 
 				if i % 5 == 0 and i != 0:
 					self.probs.append(Problem(q, ans5))
