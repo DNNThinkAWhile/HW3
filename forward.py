@@ -6,7 +6,7 @@ from theano import shared
 import random
 
 x_size = 100
-y_size = 53608 
+y_size = 53606 
 mem_vec_size = 10 
 GRAM_COUNT = 4
 BATCH_SIZE = 128

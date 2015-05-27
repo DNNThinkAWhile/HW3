@@ -2,8 +2,8 @@ import os
 
 # --------------TRAINING FILE--------------------
 # remove header till *END*
-for i_filename in os.listdir('Holmes_Training_Data'):
-    cmd = "cat Holmes_Training_Data/%s | LC_ALL=C sed -n '/*END*/,$p' | sed '1d' > training/%s" % (i_filename, i_filename)
+for i_filename in os.listdir('Holmes_Training_Data/training/'):
+    cmd = "cat Holmes_Training_Data/training/%s | LC_ALL=C sed -n '/*END*/,$p' | sed '1d' > training/%s" % (i_filename, i_filename)
     os.system(cmd)
 
 # remove char based on restriction in processing.sh
