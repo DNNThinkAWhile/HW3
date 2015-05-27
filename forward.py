@@ -10,8 +10,10 @@ y_size = 15
 mem_vec_size =10 
 GRAM_COUNT = 4
 BATCH_SIZE = 7
+learning_rate = 0.01
 
-real_mem_vector = shared( np.random.uniform( -1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3,(1, mem_vec_size)) )
+#real_mem_vector = shared( np.random.uniform( -1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3,(1, mem_vec_size)) )
+real_mem_vector = shared(np.zeros((1,mem_vec_size)))
 error_grad = shared( np.zeros((GRAM_COUNT, BATCH_SIZE, y_size)))
 
 
@@ -28,7 +30,7 @@ ans_y = T.dtensor3('ans_y')
 z_x = T.tensordot(input_x, w_i,1)
 
 zh1 = T.dot(T.tile(real_mem_vector,(BATCH_SIZE,1)), w_h)
-z1 = zh1 + z_x[0]
+z1 = z_x[0]
 a1 = 1/(T.exp((-1)*z1)+1)
 
 zh2 = T.dot(a1, w_h)
@@ -84,7 +86,7 @@ Wh_fix_4_2 = T.sum(theano.scan(lambda iter_phi_h2, iter_a1: T.tensordot(iter_a1.
 phi_i1, upd_phii1 = theano.scan(lambda iter_de_sig_z_x1, iter_phi_h2: T.dot(iter_phi_h2, iter_de_sig_z_x1 * w_h.T), sequences = [de_sig_z_x[0],phi_h2]) 
 Wi_fix_4_1 = T.sum(theano.scan(lambda iter_phi_i1, iter_x: T.tensordot(iter_x, iter_phi_i1,0), sequences =[phi_i1, input_x[0]])[0], axis = 0) / BATCH_SIZE
 phi_h1, upd_phih1 = theano.scan(lambda iter_de_sig_zh1, iter_phi_h2: T.dot(iter_phi_h2, iter_de_sig_zh1 * w_h.T), sequences = [de_sig_zh[0],phi_h2])
-Wh_fix_4_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE
+#Wh_fix_4_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE
 
     #3
 Wo_fix3 =  T.tensordot(a3.T, phi_y[2],(1,0)) / BATCH_SIZE
@@ -101,7 +103,7 @@ Wh_fix_3_2 = T.sum(theano.scan(lambda iter_phi_h2, iter_a1: T.tensordot(iter_a1,
 phi_i1, upd_phii1 = theano.scan(lambda iter_de_sig_z_x1, iter_phi_h2: T.dot(iter_phi_h2, iter_de_sig_z_x1 * w_h.T), sequences = [de_sig_z_x[0],phi_h2]) 
 Wi_fix_3_1 = T.sum(theano.scan(lambda iter_phi_i1, iter_x: T.tensordot(iter_x, iter_phi_i1,0), sequences =[phi_i1, input_x[0]])[0], axis = 0) / BATCH_SIZE
 phi_h1, upd_phih1 = theano.scan(lambda iter_de_sig_zh1, iter_phi_h2: T.dot(iter_phi_h2, iter_de_sig_zh1 * w_h.T), sequences = [de_sig_zh[0],phi_h2])
-Wh_fix_3_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE
+#Wh_fix_3_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE
 
     #2
 Wo_fix2 =  T.tensordot(a2.T, phi_y[1],(1,0)) / BATCH_SIZE
@@ -113,20 +115,22 @@ Wh_fix_2_2 = T.sum(theano.scan(lambda iter_phi_h2, iter_a2: T.tensordot(iter_a2,
 phi_i1, upd_phii1 = theano.scan(lambda iter_de_sig_z_x1, iter_phi_h2: T.dot(iter_phi_h2, iter_de_sig_z_x1 * w_h.T), sequences = [de_sig_z_x[0],phi_h2]) 
 Wi_fix_2_1 = T.sum(theano.scan(lambda iter_phi_i1, iter_x: T.tensordot(iter_x, iter_phi_i1,0), sequences =[phi_i1, input_x[0]])[0], axis = 0) / BATCH_SIZE
 phi_h1, upd_phih1 = theano.scan(lambda iter_de_sig_zh1, iter_phi_h2: T.dot(iter_phi_h2,iter_de_sig_zh1 * w_h.T), sequences = [de_sig_zh[0],phi_h2])
-Wh_fix_2_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE
+#Wh_fix_2_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE
 
     #1
 Wo_fix1 =  T.tensordot(a1.T, phi_y[0],(1,0)) / BATCH_SIZE
 phi_i1, upd_phii1 = theano.scan(lambda iter_de_sig_z_x1, iter_phi_y1: T.dot(iter_phi_y1, iter_de_sig_z_x1 * w_o.T), sequences = [de_sig_z_x[0],phi_y[0]]) 
 Wi_fix_1_1 = T.sum(theano.scan(lambda iter_phi_i1, iter_x: T.tensordot(iter_x, iter_phi_i1,0), sequences =[phi_i1, input_x[0]])[0], axis = 0) / BATCH_SIZE
 phi_h1, upd_phih1 = theano.scan(lambda iter_de_sig_zh1, iter_phi_y1: T.dot(iter_phi_y1, iter_de_sig_zh1 * w_o.T), sequences = [de_sig_zh[0],phi_y[0]])
-Wh_fix_1_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE 
+#Wh_fix_1_1 = T.sum(theano.scan(lambda iter_phi_h1: T.tensordot(real_mem_vector, iter_phi_h1,0), sequences = phi_h1)[0], axis = 0)[0] / BATCH_SIZE 
 
 
 #update
-update_w_o = w_o - Wo_fix1 - Wo_fix2 - Wo_fix3 - Wo_fix4
-update_w_i = w_i-Wi_fix_1_1-Wi_fix_2_1-Wi_fix_2_2-Wi_fix_3_1-Wi_fix_3_2-Wi_fix_3_3-Wi_fix_4_1-Wi_fix_4_2-Wi_fix_4_3-Wi_fix_4_4
-update_w_h = w_h-Wh_fix_1_1-Wh_fix_2_1-Wh_fix_2_2-Wh_fix_3_1-Wh_fix_3_2-Wh_fix_3_3-Wh_fix_4_1-Wh_fix_4_2-Wh_fix_4_3-Wh_fix_4_4
+update_w_o = w_o - learning_rate*( Wo_fix1 + Wo_fix2 + Wo_fix3 + Wo_fix4 )
+update_w_i = w_i - learning_rate*( Wi_fix_1_1 + Wi_fix_2_1 + Wi_fix_2_2 + Wi_fix_3_1 + Wi_fix_3_2 + Wi_fix_3_3 + Wi_fix_4_1 + Wi_fix_4_2 + Wi_fix_4_3 + Wi_fix_4_4)
+update_w_h = w_h - learning_rate*( Wh_fix_2_2 + Wh_fix_3_2 + Wh_fix_3_3 + Wh_fix_4_2 + Wh_fix_4_3 + Wh_fix_4_4)
+#update_w_i = w_i-Wi_fix_1_1-Wi_fix_2_1-Wi_fix_2_2-Wi_fix_3_1-Wi_fix_3_2-Wi_fix_3_3-Wi_fix_4_1-Wi_fix_4_2-Wi_fix_4_3-Wi_fix_4_4
+#update_w_h = w_h-Wh_fix_1_1-Wh_fix_2_1-Wh_fix_2_2-Wh_fix_3_1-Wh_fix_3_2-Wh_fix_3_3-Wh_fix_4_1-Wh_fix_4_2-Wh_fix_4_3-Wh_fix_4_4
 
 
 forward = function ( [input_x, ans_y], \
