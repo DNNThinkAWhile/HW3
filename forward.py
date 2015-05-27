@@ -14,7 +14,8 @@ learning_rate = 0.01
 #real_mem_vector = shared( np.random.uniform( -1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3,(1, mem_vec_size)) )
 real_mem_vector = shared(np.zeros((1,mem_vec_size)))
 error_grad = shared( np.zeros((GRAM_COUNT, BATCH_SIZE, y_size)))
-                                                
+loss = shared(0.0)
+
 w_i = shared( np.random.uniform(-1/np.sqrt(x_size)*3,       1/np.sqrt(x_size)*3,       (x_size, mem_vec_size)) )
 w_h = shared( np.random.uniform(-1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3, (mem_vec_size, mem_vec_size)) )
 w_o = shared( np.random.uniform(-1/np.sqrt(mem_vec_size)*3, 1/np.sqrt(mem_vec_size)*3, (mem_vec_size, y_size)) )                               
@@ -48,7 +49,9 @@ zy = T.tensordot(a,w_o,1)
 y =  1/(T.exp((-1)*zy)+1)
 
 #grad
-grad = 2*(ans_y - y)
+grad = 2*(y - ans_y)
+l = T.sum((y-ans_y)**2) / (GRAM_COUNT*BATCH_SIZE)
+
 
 #backpropagation
 de_sig_z = y * (1 - y)
@@ -128,9 +131,9 @@ update_w_h = w_h - learning_rate*( Wh_fix_2_2 + Wh_fix_3_2 + Wh_fix_3_3 + Wh_fix
 
 
 forward = function ( [input_x, ans_y], \
-                     [theano.Out(real_mem_vector, borrow= True), theano.Out(w_i, borrow = True), theano.Out(w_h, borrow = True), \
-                      theano.Out(w_o ,borrow = True), theano.Out(error_grad, borrow = True)], \
-                     updates = [(error_grad, grad),(w_o, update_w_o), (w_i, update_w_i), (w_h, update_w_h)])
+                     [theano.Out(l, borrow= True), theano.Out(update_w_i, borrow = True), theano.Out(update_w_h, borrow = True), \
+                      theano.Out(update_w_o ,borrow = True), theano.Out(grad, borrow = True)], \
+                     updates = [(error_grad, grad),(w_o, update_w_o), (w_i, update_w_i), (w_h, update_w_h),(loss,l)])
 #                     [theano.Out(Wh_fix_3_3, borrow= True), theano.Out(Wh_fix_4_1, borrow = True), theano.Out(Wh_fix_4_2, borrow = True), \
 #                      theano.Out(Wh_fix_4_3 ,borrow = True), theano.Out(Wh_fix_4_4, borrow = True)]) 
                      
@@ -150,4 +153,4 @@ def main():
     
 
 if __name__ == '__main__':
-   main()
+    main()
