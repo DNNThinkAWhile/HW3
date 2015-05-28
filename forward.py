@@ -7,7 +7,7 @@ import random
 
 x_size = 100
 y_size = 53606 
-mem_vec_size = 10 
+mem_vec_size = 100 
 GRAM_COUNT = 4
 BATCH_SIZE = 128
 learning_rate = 0.01
@@ -133,7 +133,7 @@ update_w_h = w_h - learning_rate*( Wh_fix_2_2 + Wh_fix_3_2 + Wh_fix_3_3 + Wh_fix
 forward = function ( [input_x, ans_y], \
                      [theano.Out(l, borrow= True), theano.Out(update_w_i, borrow = True), theano.Out(update_w_h, borrow = True), \
                       theano.Out(update_w_o ,borrow = True), theano.Out(grad, borrow = True)], \
-                     updates = [(error_grad, grad),(w_o, update_w_o), (w_i, update_w_i), (w_h, update_w_h),(loss,l)])
+                     updates = [(error_grad, grad),(w_o, update_w_o), (w_i, update_w_i), (w_h, update_w_h),(loss,l)], mode='FAST_RUN')
 #                     [theano.Out(Wh_fix_3_3, borrow= True), theano.Out(Wh_fix_4_1, borrow = True), theano.Out(Wh_fix_4_2, borrow = True), \
 #                      theano.Out(Wh_fix_4_3 ,borrow = True), theano.Out(Wh_fix_4_4, borrow = True)]) 
                      

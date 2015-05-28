@@ -33,7 +33,7 @@ def wordmodel(sentences, thresh=10):
     #print model['you']
 
 def main():
-    thresh = 10
+    thresh = 20
     o_filename = 'word2vec_training_data.txt'
     sentences = open(o_filename, 'r').readlines()
     test = open('pure_test.txt', 'r').readlines()

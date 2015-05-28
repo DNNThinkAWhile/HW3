@@ -48,8 +48,8 @@ for i in range(len(train)):
         x = []
         ans_y = []
         print 'loss: ',loss
-        if (i+1) % (100*batch) == 0:
+        if (i+1) % (50*batch) == 0:
             print 'saving model'
-            np.save('wi_iter_'+str(i+1), wi)
-            np.save('wh_iter_'+str(i+1), wh)
-            np.save('wo_iter_'+str(i+1), wo)
+            np.save('wi_r_'+str(i+1), wi)
+            np.save('wh_r_'+str(i+1), wh)
+            np.save('wo_r_'+str(i+1), wo)

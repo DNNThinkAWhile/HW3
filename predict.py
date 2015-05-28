@@ -11,10 +11,14 @@ mem_vec_size = 10
 GRAM_COUNT = 4
 BATCH_SIZE = 20
 
-model_w_i = np.random.uniform(-1,1,(x_size, mem_vec_size))
-model_w_h = np.random.uniform(-1,1,(mem_vec_size, mem_vec_size))
-model_w_o = np.random.uniform(-1,1,(mem_vec_size, y_size))
+it = 2035200
+model_w_i = np.load('wi_iter_' + str(it) + '.npy')
+model_w_h = np.load('wh_iter_' + str(it) + '.npy')
+model_w_o = np.load('wo_iter_' + str(it) + '.npy')
 
+#model_w_i = np.random.uniform(-1,1,(x_size, mem_vec_size))
+#model_w_h = np.random.uniform(-1,1,(mem_vec_size, mem_vec_size))
+#model_w_o = np.random.uniform(-1,1,(mem_vec_size, y_size))
 
 real_mem_vector = shared(np.zeros((1,mem_vec_size)))
 
