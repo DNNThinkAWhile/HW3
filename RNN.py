@@ -4,19 +4,20 @@ import sys
 import numpy as np
 import forward
 
-print 'usage: RNN <batch size> <freq threshold>'
+if len(sys.argv) < 3:
+    print 'usage: RNN <batch size> <freq threshold>'
+    quit()
 
-batch = 128
-thresh = 10
+batch = int(sys.argv[1])
+thresh = int(sys.argv[2])
 model = gensim.models.Word2Vec.load('th_%d.model' % thresh)
 print 'model loaded.'
 
 word2N = pickle.load(open( "word2N.p", "rb" )) 
-print len(word2N)
+#print len(word2N)
 train = open('training_data.txt').readlines()[0]
-train = train.split(' ')
+train = train.split()
 
-ptr = 0
 instance_x = [None]*4 # word2vec
 instance_y = [None]*4 # 1ofN ans
 x = []
@@ -50,6 +51,6 @@ for i in range(len(train)):
         print 'loss: ',loss
         if (i+1) % (50*batch) == 0:
             print 'saving model'
-            np.save('wi_r_'+str(i+1), wi)
-            np.save('wh_r_'+str(i+1), wh)
-            np.save('wo_r_'+str(i+1), wo)
+            np.save('wi_it_'+str(i+1), wi)
+            np.save('wh_it_'+str(i+1), wh)
+            np.save('wo_it_'+str(i+1), wo)

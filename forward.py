@@ -7,7 +7,7 @@ import random
 
 x_size = 100
 y_size = 53606 
-mem_vec_size = 100 
+mem_vec_size = 50 
 GRAM_COUNT = 4
 BATCH_SIZE = 128
 learning_rate = 0.01

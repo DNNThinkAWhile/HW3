@@ -1,5 +1,8 @@
 import os
 
+# create folder to copy training file
+cmd = "mkdir training"
+os.system(cmd)
 # --------------TRAINING FILE--------------------
 # remove header till *END*
 for i_filename in os.listdir('Holmes_Training_Data/training/'):

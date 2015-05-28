@@ -3,14 +3,19 @@ import gensim
 import numpy as np
 import pickle
 import csv
-thresh = 10
+import sys
+
+if len(sys.argv) < 1:
+    print 'RNNout.py <threshold>'
+    quit()
+thresh = int(sys.argv[1])
 model = gensim.models.Word2Vec.load('th_%d.model' % thresh)
 print 'model loaded.'
 word2N = pickle.load(open( "word2N.p", "rb" ))
 
 test = open('testing/testing_dummy.txt', 'r').readlines()
 outfile = csv.writer(open('kaggle.csv', 'w'))
-outfile.writerow(['Id,Prediction'])
+outfile.writerow(['id','answer'])
 #x = [None]*20
 a = [None]*5
 c = ['a', 'b', 'c', 'd', 'e']
