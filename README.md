@@ -31,4 +31,6 @@ Predict
         since we define Theano function and variable in the global section, you need to load the desired model into predict.py manually.
 
 The original training/testing data need to be in folder 'Holmes_Training_Data/training' and 'Holmes_Training_Data/testing' respectively.
+After training data preprocessing , there will be 2 main data: training_data.txt and word2vec_training_data.txt, the former one is used in Train progress, and the latter is used for training word2vec model.
+After testing data preprocessing, there will be several directories made in Holmes_Training_Data/test/, containing different formats of testing data.
 Word2Vec model will be named 'th_<threshold>.model' and the final RNN model will generate outfile 'kaggle.csv'  
