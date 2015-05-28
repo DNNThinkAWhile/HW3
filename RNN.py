@@ -44,11 +44,12 @@ for i in range(len(train)):
         ans_y = np.array(ans_y)
         x = np.swapaxes(x,0,1)
         ans_y = np.swapaxes(ans_y,0,1)
-        garbage,wi,wh,wo,loss = forward.forward(x, ans_y)
+        loss,wi,wh,wo,grad = forward.forward(x, ans_y)
         x = []
         ans_y = []
         print 'loss: ',loss
-        if i % 100*batch == 0:
-            np.save('wi_iter_'+i, wi)
-            np.save('wh_iter_'+i, wh)
-            np.save('wo_iter_'+i, wo)
+        if (i+1) % (100*batch) == 0:
+            print 'saving model'
+            np.save('wi_iter_'+str(i+1), wi)
+            np.save('wh_iter_'+str(i+1), wh)
+            np.save('wo_iter_'+str(i+1), wo)
