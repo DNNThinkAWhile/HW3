@@ -48,12 +48,12 @@ zh = T.stacklists([zh1, zh2, zh3, zh4])
 zy = T.tensordot(a,w_o,1)
 y =  1/(T.exp((-1)*zy)+1)
 
-forward = function ( [input_x],theano.Out(y, borrow= True))
+predict = function ( [input_x],theano.Out(y, borrow= True))
 
 def main():
     x = np.random.uniform(-1,1,(GRAM_COUNT, BATCH_SIZE, x_size))
 
-    re1= forward(x)
+    re1= predict(x)
 #    print np.shape(re1) , ',' , np.shape(w_i), ',' , np.shape(w_h), ',' , np.shape(w_o), ',' , np.shape(error_grad)
     print np.shape(re1) 
     print 'success!!!!!!!!!!!!!!!!!!!'
